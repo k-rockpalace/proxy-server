@@ -3,6 +3,8 @@ const app = express()
 const {createProxyMiddleware} = require('http-proxy-middleware');
 const rateLimit = require('express-rate-limit');
 require("dotenv").config();
+const url = require('url');
+
 const limiter = rateLimit({
     windowMs:15*60*1000,
     max:10000,
@@ -10,6 +12,16 @@ const limiter = rateLimit({
 
 app.get('/',(req,res)=>{
     res.send("This is my proxy");
+})
+
+app.use("/corona-tracker-country-data",limiter,(req,res,next)=>{
+    createProxyMiddleware({
+        target:`${process.env.BASE_API_URL_CORONA_COUNTRY}/${city}`,
+        changeOrigin:true,
+        pathRewrite:{
+            [`^/corona-tracker-country-data`]:"",
+        },
+    })(req,res,next)
 })
 
 app.use('/corona-tracker-world-data',limiter,(req,res,next)=>{
