@@ -15,6 +15,7 @@ app.get('/',(req,res)=>{
 })
 
 app.use("/corona-tracker-country-data",limiter,(req,res,next)=>{
+    const city = url.parse(req.url).query
     createProxyMiddleware({
         target:`${process.env.BASE_API_URL_CORONA_COUNTRY}/${city}`,
         changeOrigin:true,
